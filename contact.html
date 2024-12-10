@@ -15,12 +15,10 @@
     ></script>
   </head>
   <body>
-    <!-- NAVBAR: START -->
+    <!-- Navbar: Start -->
     <nav class="navbar navbar-expand-sm">
       <div class="container-fluid">
-        <a class="navbar-brand" href="./index.html"
-          >Coin<span class="text-warning">Trade</span></a
-        >
+        <a class="navbar-brand" href="./index.html">Coin<span>Trade</span></a>
         <button
           class="navbar-toggler"
           type="button"
@@ -32,6 +30,7 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
+
         <div
           class="collapse navbar-collapse justify-content-center"
           id="navbarNavAltMarkup"
@@ -39,11 +38,69 @@
           <div class="navbar-nav">
             <a class="nav-link" aria-current="page" href="./index.html">Home</a>
             <a class="nav-link" href="./search.html">Search Coin</a>
+            <a class="nav-link" href="./message.html">Message</a>
             <a class="nav-link" href="./contact.html">Contact</a>
           </div>
         </div>
       </div>
     </nav>
-    <!-- NAVBAR: END -->
+    <!-- Navbar: End -->
+
+    <!-- Form: Start  -->
+    <div class="container mt-3">
+      <div class="form-wrap">
+        <h1>Get in touch with us</h1>
+        <p>stay tuned with us</p>
+        <div id="feedback" class="text-white"></div>
+
+        <form onsubmit="myFunc(event)">
+          <!-- a. First Name: -->
+          <div class="form-group">
+            <label for="fname">First Name</label>
+            <input type="text" id="firstName" />
+          </div>
+          <!-- b. Last Name: -->
+          <div class="form-group">
+            <label for="lname">Last Name</label>
+            <input type="text" id="lastName" />
+          </div>
+          <!-- c. email-->
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" />
+          </div>
+          <!-- d. phone number -->
+          <div class="form-group">
+            <label for="pnumber">Phone Number</label>
+            <input type="text" id="pNumber" />
+          </div>
+
+          <!-- Message textarea -->
+
+          <div class="mb-3">
+            <label for="message" class="form-label">Message</label>
+            <textarea class="form-control" id="message" rows="3"></textarea>
+          </div>
+
+          <!-- e. Submit Button -->
+          <button type="submit" class="btn" value="post-submit">Submit</button>
+          <p class="bottom-text">
+            Please read our terms and conditions before you access our website,
+            see our
+            <a href="#">Terms & Conditions</a>
+          </p>
+        </form>
+        <!-- Form: End -->
+      </div>
+    </div>
+
+    <!-- fOOTER  -->
+    <footer>
+      <div class="d-flex flex-row justify-content-around mt-3">
+        <p>&copy; Coin<span>Trade</span> 2024</p>
+        <p>Designed by <strong> Gurpreet Singh</strong> &#128526;</p>
+      </div>
+    </footer>
+    <script src="./contact.js"></script>
   </body>
 </html>

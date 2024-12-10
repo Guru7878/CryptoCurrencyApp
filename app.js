@@ -25,6 +25,7 @@ function displayRates(result) {
 
     var cardBody = document.createElement("div");
     cardBody.className = "card-body";
+    // cardBody.style.background = "goldenrod";
 
     // 2. Display Text
 
@@ -47,7 +48,9 @@ function displayRates(result) {
       coinPrice.appendChild(coinPriceLabel);
       // bootstrap card
       coinPrice.className = "card-text";
-      var coinPriceValue = document.createTextNode(result.data[i].priceUsd);
+      var coinPriceValue = document.createTextNode(
+        Number(result.data[i].priceUsd).toFixed(4)
+      );
       coinPrice.appendChild(coinPriceValue);
     }
 
@@ -62,7 +65,7 @@ function displayRates(result) {
       coinPriceChange24.appendChild(priceChange24Label);
       coinPriceChange24.className = "card-text";
       var priceChange24 = document.createTextNode(
-        result.data[i].changePercent24Hr
+        Number(result.data[i].changePercent24Hr).toFixed(4)
       );
       coinPriceChange24.appendChild(priceChange24);
     } else {

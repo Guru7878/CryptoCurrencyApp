@@ -1,133 +1,105 @@
-// importing via module the function fetching data from API
+// Importing via module the function fetching data from API
 import { getRates } from "./queries.js";
 
-// loading search page elements into variable in order to find and access them
-
-// const coinCard = document.querySelector('#coinCard');
+// Loading search page elements into variables
 const searchBtn = document.querySelector("#searchBtn");
 const searchInput = document.querySelector("#searchInput");
-// const cards = document.querySelector('.card');
 const cardRow = document.querySelector(".row");
-// cardRow.addEventListener('click', function (params) {
-//   console.log(cardRow);
-// })
+const errorMessageElement = document.getElementById("errorMessage");
 
-// Local Storage
-const searchValue = localStorage.getItem("searchValue");
-if (searchValue) {
-  searchInput.value = searchValue;
-}
-
-// Function to display result
-
+// Function to display results
 function displayRates(result) {
-  // console.log(result);
-  for (var i = 0; i < result.data.length; i++) {
-    // console.log(result)
-    // + sign is used to override the browser behaviour of deleting previous data and the displaying the recent one
-    // cardTitle.innerHTML += result.data[i].name;
-    // priceUsd.innerHTML += result.data[i].priceUsd;
-    // priceChange24.innerHTML += result.data[i].changePercent24Hr;
+  // Clear any previous content
+  cardRow.innerHTML = "";
 
-    // Create Elements of the Card
-
-    // 1. Create a div elements for
-
-    var newCol = document.createElement("div");
+  // Loop through the result data
+  result.data.forEach((coin) => {
+    // Create Bootstrap card structure
+    const newCol = document.createElement("div");
     newCol.className = "col";
 
-    var cardContainer = document.createElement("div");
+    const cardContainer = document.createElement("div");
     cardContainer.className = "card";
 
-    var cardBody = document.createElement("div");
+    const cardBody = document.createElement("div");
     cardBody.className = "card-body";
 
-    // 2. Display Text
-
-    // a. Create h3 element for name property of coin
-
-    var coinTitle = document.createElement("h3");
+    // Coin Title
+    const coinTitle = document.createElement("h3");
     coinTitle.className = "card-title";
-    // b. Create textNode to insert string 'name' property of coin
-    var coinTitleText = document.createTextNode(result.data[i].name);
-    coinTitle.appendChild(coinTitleText);
+    coinTitle.textContent = coin.name;
 
-    // cards.appendChild(newCol);
+    // Coin Price
+    const coinPrice = document.createElement("p");
+    coinPrice.className = "card-text";
+    coinPrice.innerHTML = `<strong>Price in USD:</strong> ${
+      coin.priceUsd ? Number(coin.priceUsd).toFixed(4) : "No Data Available"
+    }`;
 
-    // b. p element for price display
+    // Price Change (24Hr)
+    const coinPriceChange24 = document.createElement("p");
+    coinPriceChange24.className = "card-text";
+    coinPriceChange24.innerHTML = `<strong>Price Change (24Hr):</strong> ${
+      coin.changePercent24Hr
+        ? Number(coin.changePercent24Hr).toFixed(4)
+        : "No Data Available"
+    }`;
 
-    if (result.data[i].priceUsd !== null) {
-      let coinPriceLabel = document.createElement("strong");
-      coinPriceLabel.innerHTML = "Price in USD : ";
-      var coinPrice = document.createElement("p");
-      coinPrice.appendChild(coinPriceLabel);
-      // bootstrap card
-      coinPrice.className = "card-text";
-      var coinPriceValue = document.createTextNode(
-        Number(result.data[i].priceUsd).toFixed(4)
-      );
-      // var coinPriceFix = Number(coinPriceValue).toFixed(4);
-      console.log(coinPriceValue);
-
-      coinPrice.appendChild(coinPriceValue);
-    }
-
-    // cards.appendChild(newCol);
-
-    // c. p element for price change display
-    if (result.data[i].changePercent24Hr !== null) {
-      let priceChange24Label = document.createElement("strong");
-      priceChange24Label.innerHTML = "Price Change (24Hr): ";
-      var coinPriceChange24 = document.createElement("p");
-      coinPriceChange24.appendChild(priceChange24Label);
-      coinPriceChange24.className = "card-text";
-      var priceChange24 = document.createTextNode(
-        Number(result.data[i].changePercent24Hr).toFixed(4)
-      );
-      coinPriceChange24.appendChild(priceChange24);
-    } else {
-      let priceChange24Label = document.createElement("strong");
-      priceChange24Label.innerHTML = "Price Change (24Hr): ";
-      var coinPriceChange24 = document.createElement("p");
-      coinPriceChange24.appendChild(priceChange24Label);
-      coinPriceChange24.className = "card-text";
-      var priceChange24 = document.createTextNode("No Data Available");
-      coinPriceChange24.appendChild(priceChange24);
-    }
-
-    // }
-
-    // newCol.appendChild(coinTitle);
-    // newCol.appendChild(coinPriceChange24);
-    // newCol.appendChild(coinPrice);
-    // cards.appendChild(newCol);
-
+    // Append elements to the card
     cardBody.appendChild(coinTitle);
     cardBody.appendChild(coinPrice);
     cardBody.appendChild(coinPriceChange24);
     cardContainer.appendChild(cardBody);
     newCol.appendChild(cardContainer);
     cardRow.appendChild(newCol);
-
-    // coinCard.innerHTML += `<p>${result.data[i].priceUsd}</p>`
-    // coinCard.innerHTML += `<p>${result.data[i].changePercent24Hr}</p>`
-  }
+  });
 }
 
+// Function to handle the search button click
 searchBtn.addEventListener("click", async function () {
-  // coinCard.innerHTML = '';
-  const searchValue = searchInput.value;
+  const searchValue = searchInput.value.trim();
+
+  // Store the search value in local storage
   localStorage.setItem("searchValue", searchValue);
-  // console.log(searchValue);
+
+  // Show error if search input is empty
   if (!searchValue) {
-    console.log("search");
+    if (errorMessageElement) {
+      errorMessageElement.textContent = "Please enter a search term.";
+      errorMessageElement.classList.remove("d-none");
+    }
     return;
   }
-  const result = await getRates(searchValue, 20);
 
-  // console.log(result);
-  // cards.innerHTML = "";
-  cardRow.innerHTML = "";
-  displayRates(result);
-  searchInput.value = "";
+  // Clear any previous error message
+  if (errorMessageElement) {
+    errorMessageElement.classList.add("d-none");
+    errorMessageElement.textContent = "";
+  }
+
+  try {
+    // Fetch data from API
+    const result = await getRates(searchValue, 20);
+
+    // Check for errors returned by getRates
+    if (result.error) {
+      if (errorMessageElement) {
+        errorMessageElement.textContent =
+          "Failed to load data. Please try again later.";
+        errorMessageElement.classList.remove("d-none");
+      }
+      return;
+    }
+
+    // Display results
+    displayRates(result);
+    searchInput.value = ""; // Clear input field
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    if (errorMessageElement) {
+      errorMessageElement.textContent =
+        "An unexpected error occurred. Please try again later.";
+      errorMessageElement.classList.remove("d-none");
+    }
+  }
 });
