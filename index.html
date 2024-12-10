@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com;"
+    />
     <title>Document</title>
 
     <!-- Bootstrap Stylesheet -->
@@ -24,6 +28,7 @@
     ></script>
   </head>
   <body>
+    <!-- Start of Navbar -->
     <nav class="navbar navbar-expand-sm">
       <div class="container-fluid">
         <a class="navbar-brand" href="./index.html"
@@ -56,21 +61,21 @@
     <!-- End of Navbar -->
 
     <!-- error message display -->
-
-    <!-- create row to display data -->
     <div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
 
+    <!-- create row to display data -->
     <div class="container container-1 mb-3">
       <div class="row row-cols-1 row-cols-sm-2 g-3 mt-3 text-center"></div>
     </div>
 
-    <!-- fOOTER  -->
+    <!-- Start of Footer -->
     <footer class="sticky-bottom">
       <div class="d-flex flex-row justify-content-around mt-3">
         <p>&copy; Coin<span>Trade</span> 2024</p>
         <p>Designed by <strong> Gurpreet Singh</strong> &#128526;</p>
       </div>
     </footer>
+    <!-- End of Footer -->
 
     <script src="app.js" type="module"></script>
   </body>
