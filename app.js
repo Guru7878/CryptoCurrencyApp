@@ -1,116 +1,98 @@
+/**
+ * dynamicRatesDisplay.js
+ *
+ * This script fetches cryptocurrency rate data at regular intervals and displays it dynamically
+ * in a Bootstrap card layout on the webpage. The rates are updated every 5 seconds.
+ *
+ * Dependencies:
+ * - `getRates` function from `queries.js` to fetch API data.
+ */
+
+// Import the function to fetch data from the API
 import { getRates } from "./queries.js";
 
-// const coinCard = document.querySelector('#coinCard');
-
+// Select the container element for displaying cards
 const cardRow = document.querySelector(".row");
 
+/**
+ * Displays cryptocurrency rates in the form of Bootstrap cards.
+ *
+ * @param {Object} result - The result object containing cryptocurrency data.
+ * @param {Array} result.data - Array of cryptocurrency objects with details like name, price, and price change.
+ */
 function displayRates(result) {
-  // console.log(result);
-  for (var i = 0; i < result.data.length; i++) {
-    // console.log(result)
-    // + sign is used to override the browser behaviour of deleting previous data and the displaying the recent one
-    // cardTitle.innerHTML += result.data[i].name;
-    // priceUsd.innerHTML += result.data[i].priceUsd;
-    // priceChange24.innerHTML += result.data[i].changePercent24Hr;
+  // Clear any previous content from the card container
+  cardRow.innerHTML = "";
 
-    // Create Elements of the Card
-
-    // 1. Create a div elements for
-
-    var newCol = document.createElement("div");
+  // Loop through the result data and create a card for each cryptocurrency
+  result.data.forEach((coin) => {
+    // Create a column container for the card
+    const newCol = document.createElement("div");
     newCol.className = "col";
 
-    var cardContainer = document.createElement("div");
+    // Create the card structure
+    const cardContainer = document.createElement("div");
     cardContainer.className = "card";
 
-    var cardBody = document.createElement("div");
+    const cardBody = document.createElement("div");
     cardBody.className = "card-body";
-    // cardBody.style.background = "goldenrod";
 
-    // 2. Display Text
-
-    // a. Create h3 element for name property of coin
-
-    var coinTitle = document.createElement("h3");
+    // Create the coin name element
+    const coinTitle = document.createElement("h3");
     coinTitle.className = "card-title";
-    // b. Create textNode to insert string 'name' property of coin
-    var coinTitleText = document.createTextNode(result.data[i].name);
-    coinTitle.appendChild(coinTitleText);
+    coinTitle.textContent = coin.name; // Set the coin name as the title
 
-    // cards.appendChild(newCol);
+    // Create the price element
+    const coinPrice = document.createElement("p");
+    coinPrice.className = "card-text";
+    coinPrice.innerHTML = `<strong>Price in USD:</strong> ${
+      coin.priceUsd ? Number(coin.priceUsd).toFixed(4) : "No Data Available"
+    }`; // Display the price or fallback text if not available
 
-    // b. p element for price display
+    // Create the price change element
+    const coinPriceChange24 = document.createElement("p");
+    coinPriceChange24.className = "card-text";
+    coinPriceChange24.innerHTML = `<strong>Price Change (24Hr):</strong> ${
+      coin.changePercent24Hr
+        ? Number(coin.changePercent24Hr).toFixed(4)
+        : "No Data Available"
+    }`; // Display the 24-hour price change or fallback text
 
-    if (result.data[i].priceUsd != null) {
-      let coinPriceLabel = document.createElement("strong");
-      coinPriceLabel.innerHTML = "Price in USD : ";
-      var coinPrice = document.createElement("p");
-      coinPrice.appendChild(coinPriceLabel);
-      // bootstrap card
-      coinPrice.className = "card-text";
-      var coinPriceValue = document.createTextNode(
-        Number(result.data[i].priceUsd).toFixed(4)
-      );
-      coinPrice.appendChild(coinPriceValue);
-    }
-
-    // cards.appendChild(newCol);
-
-    // c. p element for price change display
-
-    if (result.data[i].changePercent24Hr != null) {
-      let priceChange24Label = document.createElement("strong");
-      priceChange24Label.innerHTML = "Price Change (24Hr) : ";
-      var coinPriceChange24 = document.createElement("p");
-      coinPriceChange24.appendChild(priceChange24Label);
-      coinPriceChange24.className = "card-text";
-      var priceChange24 = document.createTextNode(
-        Number(result.data[i].changePercent24Hr).toFixed(4)
-      );
-      coinPriceChange24.appendChild(priceChange24);
-    } else {
-      let priceChange24Label = document.createElement("strong");
-      priceChange24Label.innerHTML = "Price Change (24Hr) : ";
-      var coinPriceChange24 = document.createElement("p");
-      coinPriceChange24.appendChild(priceChange24Label);
-      coinPriceChange24.className = "card-text";
-      var priceChange24 = document.createTextNode("No Data Available");
-      coinPriceChange24.appendChild(priceChange24);
-    }
-
-    // }
-
-    // newCol.appendChild(coinTitle);
-    // newCol.appendChild(coinPriceChange24);
-    // newCol.appendChild(coinPrice);
-    // cards.appendChild(newCol);
-
+    // Append all elements to the card body
     cardBody.appendChild(coinTitle);
     cardBody.appendChild(coinPrice);
     cardBody.appendChild(coinPriceChange24);
-    cardContainer.appendChild(cardBody);
-    newCol.appendChild(cardContainer);
-    cardRow.appendChild(newCol);
 
-    // coinCard.innerHTML += `<p>${result.data[i].priceUsd}</p>`
-    // coinCard.innerHTML += `<p>${result.data[i].changePercent24Hr}</p>`
+    // Append card body to the card container
+    cardContainer.appendChild(cardBody);
+
+    // Append the card container to the column
+    newCol.appendChild(cardContainer);
+
+    // Append the column to the card row
+    cardRow.appendChild(newCol);
+  });
+}
+
+/**
+ * Initializes the cryptocurrency rate display.
+ *
+ * Fetches data from the API and updates the rates displayed on the webpage.
+ * This function is executed every 5 seconds to keep the rates up to date.
+ */
+async function init() {
+  try {
+    // Fetch data from the API
+    const result = await getRates();
+
+    // Clear existing cards and display new data
+    cardRow.innerHTML = "";
+    displayRates(result);
+  } catch (error) {
+    console.error("Error fetching rates:", error);
   }
 }
 
-// function displayRates(result){
-//   console.log(coinCard);
-//   for(let i = 0; i < result.data.length; i++){
-//     coinCard.innerHTML += `<h1>${result.data[i].name}</h1>`
-//     coinCard.innerHTML += `<p>${result.data[i].priceUsd}</p>`
-//     coinCard.innerHTML += `<p>${result.data[i].changePercent24Hr}</p>`
-//   }
-// }
-
-async function init() {
-  const result = await getRates();
-  cardRow.innerHTML = "";
-  displayRates(result);
-}
-
+// Start the update process, fetching rates every 5 seconds
 const intervalID = setInterval(init, 5000);
-init();
+init(); // Initial call to fetch and display data

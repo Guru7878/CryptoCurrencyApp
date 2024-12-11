@@ -1,38 +1,48 @@
+/**
+ * Handles form submission, validates input fields, saves data to local storage,
+ * and redirects to the "message.html" page.
+ *
+ * @param {Event} event - The form submission event.
+ */
 function myFunc(event) {
-  // 1. prevent form submission
+  // Prevent the default form submission behavior
   event.preventDefault();
 
-  // Input Fields
-  const firstName = document.getElementById("firstName").value;
-  const lastName = document.getElementById("lastName").value;
-  const email = document.getElementById("email").value;
-  const pNumber = document.getElementById("pNumber").value;
-  const message = document.getElementById("message").value;
+  // Retrieve input values
+  const firstName = document.getElementById("firstName").value.trim();
+  const lastName = document.getElementById("lastName").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const pNumber = document.getElementById("pNumber").value.trim();
+  const message = document.getElementById("message").value.trim();
   const feedback = document.getElementById("feedback");
 
+  // Log the input values (for debugging)
   console.log({ firstName, lastName, email, pNumber, message });
-  // Validation Patterns
-  const phonePattern = /^[0-9]{10}$/;
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // Validation Checks
+  // Validation patterns
+  const phonePattern = /^[0-9]{10}$/; // Matches 10-digit numbers
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Matches valid email format
+
+  // Validate required fields
   if (!firstName || !lastName || !message) {
     feedback.textContent = "First Name, Last Name, and Message are required.";
-    console.error("required fields are missing.");
+    console.error("Required fields are missing.");
     return;
   }
 
+  // Validate phone number format
   if (!phonePattern.test(pNumber)) {
     feedback.textContent = "Phone number must have 10 digits.";
     return;
   }
 
+  // Validate email format
   if (!emailPattern.test(email)) {
     feedback.textContent = "Invalid email address.";
     return;
   }
 
-  // Create an object to store the data
+  // Create an object to store form data
   const formData = {
     firstName,
     lastName,
@@ -41,16 +51,18 @@ function myFunc(event) {
     message,
   };
 
-  // Save data to Local Storage
+  // Save form data to local storage
   const storedData = JSON.parse(localStorage.getItem("formSubmissions")) || [];
   storedData.push(formData);
   localStorage.setItem("formSubmissions", JSON.stringify(storedData));
 
-  // Redirect to message.html
+  // Redirect to the "message.html" page
   window.location.href = "message.html";
 }
 
-// Retrieving and displaying data on message.html page
+/**
+ * Retrieves and displays the most recent submission data on the "message.html" page.
+ */
 function displayMessageInfo() {
   const messageInfo = document.getElementById("messageInfo");
 
@@ -58,12 +70,11 @@ function displayMessageInfo() {
   const localStorageData =
     JSON.parse(localStorage.getItem("formSubmissions")) || [];
 
-  // Retrieve the most recent submission (last entry in the array)
+  // Get the most recent submission (last entry in the array)
   const recentSubmission = localStorageData[localStorageData.length - 1];
 
-  // Check if data exists
+  // Check if data exists and display it
   if (recentSubmission) {
-    // Display the retrieved data
     messageInfo.innerHTML = `
       <p><strong>First Name:</strong> ${recentSubmission.firstName}</p>
       <p><strong>Last Name:</strong> ${recentSubmission.lastName}</p>
@@ -72,12 +83,12 @@ function displayMessageInfo() {
       <p><strong>Message:</strong> ${recentSubmission.message}</p>
     `;
   } else {
-    // Display a fallback message if no data is found
+    // Fallback message if no data is found
     messageInfo.innerHTML = "<p>No Message was found.</p>";
   }
 }
 
-// Call displayMessageInfo when the page loads
+// Automatically call displayMessageInfo when the "message.html" page loads
 if (window.location.pathname.includes("message.html")) {
   displayMessageInfo();
 }
